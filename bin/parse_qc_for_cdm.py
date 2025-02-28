@@ -1,4 +1,6 @@
-"""Generate a master html template."""
+#!/usr/bin/env python
+
+"""Generate qc json file from NanoPlot input file."""
 
 import re
 import json
@@ -19,23 +21,22 @@ List of functions:
     parse_summary, get_flag.
 
 List of standard modules:
-    csv, argparse.
+    re, csv, argparse.
 
 List of "non standard" modules:
-    pandas, .
+    None
 
 Procedure:
-    1. Get sample IDs by parsing samplesheet csv.
-    2. Render html using template.
-    3. Write out master.html file.
+    1. Parse NanoPlot NanoStats file.
+    2. Write out qc json file.
 
 -----------------------------------------------------------------------------------------------------------
 '''
 
 usage = '''
 -----------------------------------------------------------------------------------------------------------
-Generates master html file that points to all html files.
-Executed using: python3 ./generate_master_html.py -i <Input_Directory> -o <Output_Filepath>
+Creates qc json file for cdm input.
+Executed using: python3 ./parse_qc_for_cdm.py -i <Input_Directory> -o <Output_Filepath>
 -----------------------------------------------------------------------------------------------------------
 '''
 
@@ -47,20 +48,13 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '-v', '--version',
     action='version',
-    version='%(prog)s {VERSION}'
+    version=f'%(prog)s {VERSION}'
     )
 parser.add_argument(
     '-i', '--input',
     help='input from NanoPlot NanoStats file',
     metavar='NANOPLOT_INPUT_FILE',
     dest='input',
-    required=True
-    )
-parser.add_argument(
-    '-c', '--cdmpy',
-    help='input from NanoPlot NanoStats file',
-    metavar='CDMPY_OUTPUT_FILE',
-    dest='cdmpy',
     required=True
     )
 parser.add_argument(
@@ -77,7 +71,7 @@ def get_flag(line):
     if "reads above quality cutoffs" in line:
         current_section = "pct_above_x"
     elif "mean basecall quality scores" in line:
-        current_section = "top_quality_scores"
+        current_section = "top_mean_quality_scores"
     elif "longest reads" in line:
         current_section = "top_longest_reads"
     return current_section
@@ -88,15 +82,14 @@ def parse_summary(file_path):
     with open(file_path, 'r', encoding="utf-8") as file:
         for line in file:
             line = line.strip()
-
             if not line:
                 continue
             if ":" in line:
                 key, value = line.split(":", 1)
+                if not value.strip():
+                    continue
                 key = key.strip().lower().replace(" ", "_")
                 value = value.strip().replace(",", "")
-                value = float(value) if "." in value else int(value)
-                summary_dict[key] = value
 
                 if current_section == "pct_above_x":
                     parts = line.split()
@@ -109,7 +102,7 @@ def parse_summary(file_path):
                     else:
                         summary_dict[current_section] = {quality_score: (num_reads, percentage, megabases)}
 
-                if current_section == "top_scores":
+                elif current_section == "top_mean_quality_scores":
                     match = re.match(r"^(\d+):\s+([\d.]+)\s+\((\d+)\)$", line)
                     if match:
                         rank = match.group(1)
@@ -120,7 +113,7 @@ def parse_summary(file_path):
                         else:
                             summary_dict[current_section] = {rank: (mean_quality, read_length)}
 
-                if current_section == "top_longest_reads":
+                elif current_section == "top_longest_reads":
                     match = re.match(r"^(\d+):\s+(\d+)\s+\(([\d.]+)\)$", line)
                     if match:
                         rank = match.group(1)
@@ -130,6 +123,12 @@ def parse_summary(file_path):
                             summary_dict[current_section][rank] = (read_length, mean_quality)
                         else:
                             summary_dict[current_section] = {rank: (read_length, mean_quality)}
+                else:
+                    try:
+                        value = float(value) if "." in value else int(value)
+                    except ValueError:
+                        continue
+                    summary_dict[key] = value
             else:
                 current_section = get_flag(line)
     return summary_dict
