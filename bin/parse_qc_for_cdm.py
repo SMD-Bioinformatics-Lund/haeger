@@ -69,7 +69,7 @@ args = parser.parse_args()
 
 def get_flag(line):
     if "reads above quality cutoffs" in line:
-        current_section = "pct_above_x"
+        current_section = "pct_above_qual"
     elif "mean basecall quality scores" in line:
         current_section = "top_mean_quality_scores"
     elif "longest reads" in line:
@@ -91,7 +91,7 @@ def parse_summary(file_path):
                 key = key.strip().lower().replace(" ", "_")
                 value = value.strip().replace(",", "")
 
-                if current_section == "pct_above_x":
+                if current_section == "pct_above_qual":
                     parts = line.split()
                     quality_score = parts[0].strip(":>").lower()
                     num_reads = int(parts[1])
