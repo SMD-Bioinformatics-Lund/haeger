@@ -2,9 +2,9 @@ Post-processing for the the [gms_16S](https://github.com/genomic-medicine-sweden
 
 ### Running sulphur
 
-```
 Example run script which can be executed using sbatch:
 
+```
 #!/bin/bash
 #SBATCH --job-name=sulphur
 #SBATCH --output=slurm_logs/%j.log
@@ -23,5 +23,5 @@ sequencing_run="YYMMDD_SEQUENCING_RUN_ID"
 
 nextflow run "${main_nf}" \
     --csv "${csv}" \
-    --sequencing_run ${sequencing_run} | tee "${outdir}/run.log"
+    --sequencing_run "${sequencing_run}" | tee "${outdir}/run.log"
 ```

@@ -11,9 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
  - Added `parse_qc_for_cdm.py` to bin
  - Added `cdm` & `qc` modules
- - Added config that overides `gms_16S` config
+ - Added config that overides `taco` config
  - Added `CHANGELOG`
 
 ### Fixed
 
 ### Changed
+
+ - Changed name of pipeline from `gms_16s` to `taco`
