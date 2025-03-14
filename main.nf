@@ -25,8 +25,7 @@ workflow {
     } else {
         ch_nanostats = ch_meta.map { meta ->
             def sample_id = meta.id
-            def sequencing_run = meta.sequencing_run
-            def nanostats_txt = String.format(params.taco_results_paths.nanostats_txt, sequencing_run, sample_id)
+            def nanostats_txt = String.format(params.taco_results_paths.nanostats_txt, sample_id)
             tuple(meta, file(nanostats_txt))
         }
         SULPHUR (ch_nanostats)
