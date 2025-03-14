@@ -2,9 +2,8 @@
 
 nextflow.enable.dsl=2
 
-include { PIPELINE_INITIALISATION } from '../taco/subworkflows/local/pipeline_initialisation/main.nf'
 include { GMSEMU                  } from '../taco/workflows/gmsemu.nf'
-include { get_seqrun_meta         } from './methods/get_seqrun_meta.nf'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_sulphur_pipeline/main.nf'
 include { SULPHUR                 } from './workflows/sulphur.nf'
 
 workflow {
@@ -26,7 +25,8 @@ workflow {
     } else {
         ch_nanostats = ch_meta.map { meta ->
             def sample_id = meta.id
-            def nanostats_txt = String.format(params.taco_results_paths.nanostats_txt, params.sequencing_run, sample_id)
+            def sequencing_run = meta.sequencing_run
+            def nanostats_txt = String.format(params.taco_results_paths.nanostats_txt, sequencing_run, sample_id)
             tuple(meta, file(nanostats_txt))
         }
         SULPHUR (ch_nanostats)

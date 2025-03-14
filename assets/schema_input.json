@@ -1,0 +1,46 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/SMD-Bioinformatics-Lund/sulphur/master/assets/schema_input.json",
+    "title": "SMD-Bioinformatics-Lund/sulphur pipeline - params.csv schema",
+    "description": "Schema for the file provided with params.csv",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "sample": {
+                "type": "string",
+                "meta": ["id", "sample"],
+                "pattern": "^\\S+$",
+                "errorMessage": "Sample name must be provided and cannot contain spaces"
+            },
+            "fastq_1": {
+                "type": "string",
+                "format": "file-path",
+                "exists": true,
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+            },
+            "fastq_2": {
+                "type": "string",
+                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'",
+                "anyOf": [
+                    {
+                        "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                        "format": "file-path",
+                        "exists": true
+                    },
+                    {
+                        "maxLength": 0
+                    }
+                ]
+            },
+            "sequencing_run": {
+                "type": "string",
+                "meta": ["sequencing_run"],
+                "pattern": "^\\S+$",
+                "errorMessage": "Sequencing run ID must be provided and cannot contain spaces"
+            }
+        },
+        "required": ["sample", "fastq_1", "sequencing_run"]
+    }
+}
