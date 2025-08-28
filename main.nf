@@ -2,25 +2,49 @@
 
 nextflow.enable.dsl=2
 
-include { GMSEMU                  } from '../taco/workflows/gmsemu.nf'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_sulphur_pipeline/main.nf'
-include { SULPHUR                 } from './workflows/sulphur.nf'
+include { TACO                          } from '../taco/workflows/taco.nf'
+include { PIPELINE_INITIALISATION       } from '../taco/subworkflows/local/utils_nfcore_taco_pipeline/main.nf'
+include { GENERATE_BARCODES_SAMPLESHEET } from './modules/local/generate_barcodes_samplesheet/main.nf'
+include { SULPHUR                       } from './workflows/sulphur.nf'
 
 workflow {
     main:
-    ch_versions = Channel.empty()
 
-    PIPELINE_INITIALISATION (params.csv)
+    ch_versions                 = Channel.empty()
 
-    PIPELINE_INITIALISATION.out.reads.map {
-        meta, reads -> [meta + [single_end: 1]]
-    }.set{ ch_meta }
+    //
+    // Initialize file channels for GENERATE_BARCODES_SAMPLESHEET module
+    //
+    input_samples               = params.csv                ? file(params.csv, checkIfExists: true)
+    merge_fastq_pass            = params.merge_fastq_pass   ? file(params.merge_fastq_pass, checkIfExists: true)
+
+    GENERATE_BARCODES_SAMPLESHEET (input_samples)
+
+    //
+    // SUBWORKFLOW: Run initialisation tasks
+    //
+    PIPELINE_INITIALISATION (
+        params.version,
+        params.validate_params,
+        params.monochrome_logs,
+        args,
+        params.outdir,
+        params.csv,
+        GENERATE_BARCODES_SAMPLESHEET.out.barcodes_samplesheet,
+        merge_fastq_pass
+    )
 
     if (params.run_taco) {
-        GMSEMU (PIPELINE_INITIALISATION.out.samplesheet, PIPELINE_INITIALISATION.out.reads)
-        ch_versions.mix(GMSEMU.out.versions)
+        //
+        // WORKFLOW: Run main workflow
+        //
+        TACO (
+            PIPELINE_INITIALISATION.out.samplesheet,
+            PIPELINE_INITIALISATION.out.reads
+        )
+        ch_versions.mix(TACO.out.versions)
 
-        SULPHUR (GMSEMU.out.nanostats_unprocessed)
+        SULPHUR (TACO.out.nanostats_unprocessed)
         ch_versions.mix(SULPHUR.out.versions)
     } else {
         ch_nanostats = ch_meta.map { meta ->
