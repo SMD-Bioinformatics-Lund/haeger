@@ -1,6 +1,6 @@
 // Postprocessing
-include { PARSE_QC_FOR_CDM  } from './modules/qc/main.nf'
-include { EXPORT_TO_CDM     } from './modules/cdm/main.nf'
+include { PARSE_QC_FOR_CDM  } from './modules/local/qc/main.nf'
+include { EXPORT_TO_CDM     } from './modules/local/cdm/main.nf'
 
 workflow SULPHUR {
     take:
