@@ -15,8 +15,8 @@ workflow {
     //
     // Initialize file channels for GENERATE_BARCODES_SAMPLESHEET module
     //
-    input_samples               = params.csv                ? file(params.csv, checkIfExists: true)
-    merge_fastq_pass            = params.merge_fastq_pass   ? file(params.merge_fastq_pass, checkIfExists: true)
+    input_samples               = params.csv                        ? file(params.csv, checkIfExists: true)
+    merge_fastq_pass            = params.sequencing_run             ? file("${sequencing_run}/fastq_pass", checkIfExists: true)
 
     GENERATE_BARCODES_SAMPLESHEET (input_samples)
 
