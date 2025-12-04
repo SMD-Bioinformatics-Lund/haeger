@@ -2,10 +2,10 @@
 
 nextflow.enable.dsl=2
 
-include { TACO                          } from '../taco/workflows/taco.nf'
-include { PIPELINE_INITIALISATION       } from '../taco/subworkflows/local/utils_nfcore_taco_pipeline/main.nf'
-include { GENERATE_BARCODES_SAMPLESHEET } from './modules/local/generate_barcodes_samplesheet/main.nf'
-include { SULPHUR                       } from './workflows/sulphur.nf'
+include { TRANA                         } from '../trana/workflows/trana.nf'
+include { PIPELINE_INITIALISATION       } from '../trana/subworkflows/local/utils_nfcore_trana_pipeline/main.nf'
+include { CONCATENATE_READS             } from './modules/local/concatenate_reads/main.nf'
+include { HAEGER                        } from './workflows/haeger.nf'
 
 workflow {
     main:
@@ -13,12 +13,12 @@ workflow {
     ch_versions                 = Channel.empty()
 
     //
-    // Initialize file channels for GENERATE_BARCODES_SAMPLESHEET module
+    // Initialize file channels for CONCATENATE_READS module
     //
     input_samples               = params.csv                        ? file(params.csv, checkIfExists: true)
-    merge_fastq_pass            = params.sequencing_run             ? file("${sequencing_run}/fastq_pass", checkIfExists: true)
+    merge_fastq_pass            = params.sequencing_run             ? file("${params.sequencing_run}/fastq_pass", checkIfExists: true)
 
-    GENERATE_BARCODES_SAMPLESHEET (input_samples)
+    CONCATENATE_READS (input_samples)
 
     //
     // SUBWORKFLOW: Run initialisation tasks
@@ -30,29 +30,29 @@ workflow {
         args,
         params.outdir,
         params.csv,
-        GENERATE_BARCODES_SAMPLESHEET.out.barcodes_samplesheet,
+        CONCATENATE_READS.out.csv,
         merge_fastq_pass
     )
 
-    if (params.run_taco) {
+    if (params.run_trana) {
         //
         // WORKFLOW: Run main workflow
         //
-        TACO (
+        TRANA (
             PIPELINE_INITIALISATION.out.samplesheet,
             PIPELINE_INITIALISATION.out.reads
         )
-        ch_versions.mix(TACO.out.versions)
+        ch_versions.mix(TRANA.out.versions)
 
-        SULPHUR (TACO.out.nanostats_unprocessed)
-        ch_versions.mix(SULPHUR.out.versions)
+        HAEGER (TRANA.out.nanostats_unprocessed)
+        ch_versions.mix(HAEGER.out.versions)
     } else {
         ch_nanostats = ch_meta.map { meta ->
             def sample_id = meta.id
-            def nanostats_txt = String.format(params.taco_results_paths.nanostats_txt, sample_id)
+            def nanostats_txt = String.format(params.trana_results_paths.nanostats_txt, sample_id)
             tuple(meta, file(nanostats_txt))
         }
-        SULPHUR (ch_nanostats)
-        ch_versions.mix(SULPHUR.out.versions)
+        HAEGER (ch_nanostats)
+        ch_versions.mix(HAEGER.out.versions)
     }
 }
