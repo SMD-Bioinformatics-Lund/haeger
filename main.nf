@@ -15,8 +15,8 @@ workflow {
     //
     // Initialize file channels for CONCATENATE_READS module
     //
-    input_samples               = params.csv                        ? file(params.csv, checkIfExists: true)
-    merge_fastq_pass            = params.sequencing_run             ? file("${params.sequencing_run}/fastq_pass", checkIfExists: true)
+    input_samples               = params.csv                        ? file(params.csv, checkIfExists: true)                             : Channel.value([])
+    merge_fastq_pass            = params.sequencing_run             ? file("${params.sequencing_run}/fastq_pass", checkIfExists: true)  : Channel.value([])
 
     CONCATENATE_READS (input_samples)
 
