@@ -1,0 +1,289 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/genomic-medicine-sweden/haeger/nextflow_schema.json",
+    "title": "genomic-medicine-sweden/haeger pipeline parameters",
+    "description": "A nextflow pipeline for post-processing TRANA results and exporting to CDM format.",
+    "type": "object",
+    "properties": {
+        "csv": {
+            "type": "string",
+            "format": "file-path",
+            "exists": true,
+            "mimetype": "text/csv",
+            "pattern": "^\\S+\\.csv$",
+            "description": "Path to comma-separated file containing information about the samples.",
+            "help_text": "CSV file with sample information for read concatenation and processing.",
+            "fa_icon": "fas fa-file-csv"
+        },
+        "outdir": {
+            "type": "string",
+            "format": "directory-path",
+            "description": "The output directory where the results will be saved.",
+            "fa_icon": "fas fa-folder-open"
+        },
+        "sequencing_run": {
+            "type": "string",
+            "format": "directory-path",
+            "description": "Path to sequencing run directory containing fastq_pass folder.",
+            "help_text": "Directory path to the sequencing run containing the fastq_pass subdirectory with raw reads.",
+            "fa_icon": "fas fa-folder"
+        },
+        "db": {
+            "type": "string",
+            "format": "directory-path",
+            "description": "Path to TRANA/EMU database directory.",
+            "help_text": "Path to the database directory used by TRANA for taxonomic classification.",
+            "fa_icon": "fas fa-database"
+        },
+        "run_trana": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to run the TRANA workflow.",
+            "help_text": "If true, runs TRANA workflow for taxonomic analysis. If false, uses existing TRANA results.",
+            "fa_icon": "fas fa-play"
+        },
+        "save_merged_reads": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to save merged/concatenated reads to output.",
+            "help_text": "If true, saves the concatenated reads files to the output directory.",
+            "fa_icon": "fas fa-save"
+        },
+        "containers_dir": {
+            "type": "string",
+            "format": "directory-path",
+            "description": "Directory path for Singularity containers.",
+            "help_text": "Path to directory containing Singularity container images for offline execution.",
+            "fa_icon": "fas fa-box"
+        },
+        "offline": {
+            "type": "boolean",
+            "default": true,
+            "description": "Run in offline mode using local containers.",
+            "help_text": "If true, uses local container images instead of pulling from remote registries.",
+            "fa_icon": "fas fa-wifi"
+        },
+        "publish_dir_overwrite": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to overwrite existing output files.",
+            "help_text": "If true, overwrites existing files in output directories.",
+            "fa_icon": "fas fa-sync"
+        },
+        "copy_to_cron_dir": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to copy CDM results to cron directory.",
+            "help_text": "If true, copies CDM output to /fs1/results/cron/qc for automated processing.",
+            "fa_icon": "fas fa-copy"
+        },
+        "trana_results_paths": {
+            "type": "object",
+            "description": "Paths to existing TRANA result files when run_trana is false.",
+            "help_text": "Object containing paths to TRANA output files for processing existing results.",
+            "fa_icon": "fas fa-map",
+            "properties": {
+                "nanostats_txt": {
+                    "type": "string",
+                    "description": "Path template for NanoStats text files.",
+                    "pattern": ".*%s.*\\.txt$"
+                }
+            }
+        },
+        "config_profile_name": {
+            "type": "string",
+            "description": "Institutional config name.",
+            "hidden": true,
+            "fa_icon": "fas fa-users-cog"
+        },
+        "config_profile_description": {
+            "type": "string", 
+            "description": "Institutional config description.",
+            "hidden": true,
+            "fa_icon": "fas fa-users-cog"
+        },
+        "max_cpus": {
+            "type": "integer",
+            "description": "Maximum number of CPUs that can be requested for any single job.",
+            "default": 60,
+            "fa_icon": "fas fa-microchip",
+            "help_text": "Use to set an upper-limit for the CPU requirement for each process."
+        },
+        "max_memory": {
+            "type": "string",
+            "description": "Maximum amount of memory that can be requested for any single job.",
+            "default": "300.GB",
+            "fa_icon": "fas fa-memory",
+            "pattern": "^\\d+(\\.\\d+)?\\.?\\s*(K|M|G|T)?B$",
+            "help_text": "Use to set an upper-limit for the memory requirement for each process."
+        },
+        "max_time": {
+            "type": "string",
+            "description": "Maximum amount of time that can be requested for any single job.",
+            "default": "48.h",
+            "fa_icon": "far fa-clock",
+            "pattern": "^(\\d+\\.?\\s*(s|m|h|d|day)\\s*)+$",
+            "help_text": "Use to set an upper-limit for the time requirement for each process."
+        },
+        "version": {
+            "type": "boolean",
+            "description": "Display version and exit.",
+            "fa_icon": "fas fa-question-circle",
+            "hidden": true
+        },
+        "validate_params": {
+            "type": "boolean",
+            "default": true,
+            "description": "Boolean whether to validate parameters against the schema at runtime",
+            "fa_icon": "fas fa-check-square",
+            "help_text": "By default, parameters are validated against the schema at runtime."
+        },
+        "monochrome_logs": {
+            "type": "boolean",
+            "description": "Do not use coloured log outputs.",
+            "fa_icon": "fas fa-palette",
+            "help_text": "Set to disable colourful command line output."
+        }
+    },
+    "allOf": [
+        {
+            "$ref": "#/$defs/input_output_options"
+        },
+        {
+            "$ref": "#/$defs/trana_options"
+        },
+        {
+            "$ref": "#/$defs/read_processing_options"
+        },
+        {
+            "$ref": "#/$defs/cdm_export_options"
+        },
+        {
+            "$ref": "#/$defs/infrastructure_options"
+        },
+        {
+            "$ref": "#/$defs/max_job_request_options"
+        },
+        {
+            "$ref": "#/$defs/generic_options"
+        }
+    ],
+    "$defs": {
+        "input_output_options": {
+            "title": "Input/output options",
+            "type": "object",
+            "fa_icon": "fas fa-terminal",
+            "description": "Define where the pipeline should find input data and save output data.",
+            "required": [
+                "outdir"
+            ],
+            "properties": {
+                "csv": {
+                    "$ref": "#/properties/csv"
+                },
+                "outdir": {
+                    "$ref": "#/properties/outdir"
+                },
+                "sequencing_run": {
+                    "$ref": "#/properties/sequencing_run"
+                }
+            }
+        },
+        "trana_options": {
+            "title": "TRANA workflow options",
+            "type": "object",
+            "fa_icon": "fas fa-dna",
+            "description": "Options for TRANA taxonomic analysis workflow.",
+            "properties": {
+                "db": {
+                    "$ref": "#/properties/db"
+                },
+                "run_trana": {
+                    "$ref": "#/properties/run_trana"
+                },
+                "trana_results_paths": {
+                    "$ref": "#/properties/trana_results_paths"
+                }
+            }
+        },
+        "read_processing_options": {
+            "title": "Read processing options", 
+            "type": "object",
+            "fa_icon": "fas fa-layer-group",
+            "description": "Options for read concatenation and processing.",
+            "properties": {
+                "save_merged_reads": {
+                    "$ref": "#/properties/save_merged_reads"
+                }
+            }
+        },
+        "cdm_export_options": {
+            "title": "CDM export options",
+            "type": "object", 
+            "fa_icon": "fas fa-upload",
+            "description": "Options for exporting results to CDM format.",
+            "properties": {
+                "copy_to_cron_dir": {
+                    "$ref": "#/properties/copy_to_cron_dir"
+                }
+            }
+        },
+        "infrastructure_options": {
+            "title": "Infrastructure options",
+            "type": "object",
+            "fa_icon": "fas fa-server",
+            "description": "Options for container management and execution environment.",
+            "properties": {
+                "containers_dir": {
+                    "$ref": "#/properties/containers_dir"
+                },
+                "offline": {
+                    "$ref": "#/properties/offline"
+                },
+                "publish_dir_overwrite": {
+                    "$ref": "#/properties/publish_dir_overwrite"
+                },
+                "config_profile_name": {
+                    "$ref": "#/properties/config_profile_name"
+                },
+                "config_profile_description": {
+                    "$ref": "#/properties/config_profile_description"
+                }
+            }
+        },
+        "max_job_request_options": {
+            "title": "Max job request options",
+            "type": "object",
+            "fa_icon": "fab fa-acquisitions-incorporated",
+            "description": "Set the top limit for requested resources for any single job.",
+            "properties": {
+                "max_cpus": {
+                    "$ref": "#/properties/max_cpus"
+                },
+                "max_memory": {
+                    "$ref": "#/properties/max_memory"
+                },
+                "max_time": {
+                    "$ref": "#/properties/max_time"
+                }
+            }
+        },
+        "generic_options": {
+            "title": "Generic options",
+            "type": "object", 
+            "fa_icon": "fas fa-file-import",
+            "description": "General pipeline options.",
+            "properties": {
+                "version": {
+                    "$ref": "#/properties/version"
+                },
+                "validate_params": {
+                    "$ref": "#/properties/validate_params"
+                },
+                "monochrome_logs": {
+                    "$ref": "#/properties/monochrome_logs"
+                }
+            }
+        }
+    }
+}
