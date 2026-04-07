@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - master
+      - dev
+
+env:
+  NXF_ANSI_LOG: false
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  stub-run:
+    name: Stub run
+    if: "${{ github.repository_owner == 'genomic-medicine-sweden' }}"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out haeger
+        uses: actions/checkout@v4
+        with:
+          path: haeger
+
+      - name: Check out trana
+        uses: actions/checkout@v4
+        with:
+          repository: genomic-medicine-sweden/trana
+          path: trana
+
+      - name: Install Nextflow
+        uses: nf-core/setup-nextflow@v2
+
+      - name: Run pipeline lint
+        run: nextflow lint haeger/main.nf
+
+      - name: Run pipeline stub
+        run: |
+          nextflow \
+            -log haeger/nextflow.log \
+            run haeger/main.nf \
+            -profile test \
+            -stub-run
