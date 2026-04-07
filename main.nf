@@ -27,7 +27,7 @@ workflow {
         params.version,
         params.validate_params,
         params.monochrome_logs,
-        args,
+        workflow.commandLine,
         params.outdir,
         params.csv,
         CONCATENATE_READS.out.csv,
@@ -47,7 +47,7 @@ workflow {
         HAEGER (TRANA.out.nanostats_unprocessed)
         ch_versions.mix(HAEGER.out.versions)
     } else {
-        ch_nanostats = ch_meta.map { meta ->
+        ch_nanostats = PIPELINE_INITIALISATION.out.reads.map { meta, reads ->
             def sample_id = meta.id
             def nanostats_txt = String.format(params.trana_results_paths.nanostats_txt, sample_id)
             tuple(meta, file(nanostats_txt))

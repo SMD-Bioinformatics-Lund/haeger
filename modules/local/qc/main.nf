@@ -1,6 +1,6 @@
 process PARSE_QC_FOR_CDM {
     input:
-    path nanostats
+    tuple val(meta), path(nanostats)
 
     output:
     tuple val(meta), path("${prefix}_qc.json"), emit: json
