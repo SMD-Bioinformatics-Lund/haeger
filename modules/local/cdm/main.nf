@@ -4,7 +4,7 @@ process EXPORT_TO_CDM {
     tuple val(meta), path(qc)
 
   output:
-    tuple val(meta), path("${prefix}.cdmpy"), emit: cdmpy
+    tuple val(meta), path("*.cdmpy"), emit: cdmpy
 
   script:
     def args = task.ext.args ?: ''

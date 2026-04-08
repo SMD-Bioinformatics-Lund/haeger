@@ -26,6 +26,7 @@ workflow {
     PIPELINE_INITIALISATION (
         params.version,
         params.validate_params,
+        "${projectDir}/nextflow_schema.json",
         params.monochrome_logs,
         workflow.commandLine,
         params.outdir,
@@ -40,7 +41,8 @@ workflow {
         //
         TRANA (
             PIPELINE_INITIALISATION.out.samplesheet,
-            PIPELINE_INITIALISATION.out.reads
+            PIPELINE_INITIALISATION.out.reads,
+            params.outdir
         )
         ch_versions.mix(TRANA.out.versions)
 
