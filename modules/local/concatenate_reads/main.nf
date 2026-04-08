@@ -17,4 +17,15 @@ process CONCATENATE_READS {
         concatenate_reads: \$(concatenate_reads.py --version | sed 's/^.*concatenate_reads.py //' )
     END_VERSIONS
     """
+
+    stub:
+    def output = csv.baseName + "_concatenated.csv"
+    """
+    printf "sample,fastq_1\\n" > ${output}
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        concatenate_reads: 0.0.0
+    END_VERSIONS
+    """
 }

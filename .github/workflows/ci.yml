@@ -20,7 +20,7 @@ concurrency:
 jobs:
   stub-run:
     name: Stub run
-    if: "${{ github.repository_owner == 'genomic-medicine-sweden' }}"
+    if: "${{ github.repository_owner == 'SMD-Bioinformatics-Lund' }}"
     runs-on: ubuntu-latest
     steps:
       - name: Check out haeger
@@ -40,10 +40,16 @@ jobs:
       - name: Run pipeline lint
         run: nextflow lint haeger/main.nf
 
+      - name: Generate test samplesheet
+        run: |
+          printf "id,fastqs\ntest_sample,%s/trana/assets/test_assets/small_test_data2.fastq.gz\n" \
+            "$GITHUB_WORKSPACE" > /tmp/samplesheet.csv
+
       - name: Run pipeline stub
         run: |
           nextflow \
             -log haeger/nextflow.log \
             run haeger/main.nf \
             -profile test \
-            -stub-run
+            -stub-run \
+            --csv /tmp/samplesheet.csv
