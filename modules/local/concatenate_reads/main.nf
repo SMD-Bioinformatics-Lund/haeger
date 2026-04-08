@@ -19,7 +19,7 @@ process CONCATENATE_READS {
     """
 
     stub:
-    def output = csv.baseName + "_concatenated.csv"
+    output = csv.baseName + "_concatenated.csv"
     """
     printf "sample,fastq_1\\n" > ${output}
 

@@ -3,7 +3,7 @@ process PARSE_QC_FOR_CDM {
     tuple val(meta), path(nanostats)
 
     output:
-    tuple val(meta), path("${prefix}_qc.json"), emit: json
+    tuple val(meta), path("*_qc.json"), emit: json
     path "versions.yml"                       , emit: versions
 
     script:
