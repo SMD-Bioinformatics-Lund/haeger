@@ -17,6 +17,7 @@ workflow {
     //
     input_samples               = params.csv                        ? file(params.csv, checkIfExists: true)                             : Channel.value([])
     merge_fastq_pass            = params.sequencing_run             ? file("${params.sequencing_run}/fastq_pass", checkIfExists: true)  : Channel.value([])
+    nextflow_schema                      = file(params.nextflow_schema, checkIfExists: true)
 
     CONCATENATE_READS (input_samples)
 
@@ -26,7 +27,7 @@ workflow {
     PIPELINE_INITIALISATION (
         params.version,
         params.validate_params,
-        "${projectDir}/nextflow_schema.json",
+        nextflow_schema,
         params.monochrome_logs,
         workflow.commandLine,
         params.outdir,
