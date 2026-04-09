@@ -40,11 +40,6 @@ jobs:
       - name: Run pipeline lint
         run: nextflow lint haeger/main.nf
 
-      - name: Generate test samplesheet
-        run: |
-          printf "id,fastqs\ntest_sample,%s/trana/assets/test_assets/small_test_data2.fastq.gz\n" \
-            "$GITHUB_WORKSPACE" > /tmp/samplesheet.csv
-
       - name: Run pipeline stub
         run: |
           nextflow \
@@ -54,4 +49,4 @@ jobs:
             run haeger/main.nf \
             -profile test \
             -stub-run \
-            --csv /tmp/samplesheet.csv
+            --csv haeger/test-data/test_input.csv

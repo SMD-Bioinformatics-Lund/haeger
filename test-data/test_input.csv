@@ -1,0 +1,2 @@
+clarity_sample_id,id,assay,clarity_pool_id,platform,sequencing_run,n_reads,fastqs
+CMD123123,MS25123456,haeger,123-123456,nanopore,20251204_0000_MN12345_AYK123_12345678,9999,haeger/test-data/seqdata/Minion1/20251204_0000_MN12345_AYK123_12345678/fastq_pass/MS25123456/AYK123_pass_MS25123456_12345678_aa1234aa_*.fastq.gz
