@@ -15,8 +15,8 @@ workflow {
     //
     // Initialize file channels for CONCATENATE_READS module
     //
-    input_samples               = params.csv                        ? file(params.csv, checkIfExists: true)                             : Channel.value([])
-    merge_fastq_pass            = params.fastq_pass                 ? file(params.fastq_pass, checkIfExists: true)                      : Channel.value([])
+    input_samples               = params.csv        ? file(params.csv, checkIfExists: true)             : null
+    merge_fastq_pass            = params.fastq_pass ? file(params.fastq_pass, checkIfExists: true)      : null
     nextflow_schema             = file(params.nextflow_schema, checkIfExists: true)
 
     CONCATENATE_READS (input_samples)
@@ -31,8 +31,8 @@ workflow {
         params.monochrome_logs,
         workflow.commandLine,
         params.outdir,
-        params.csv,
         CONCATENATE_READS.out.csv,
+        params.barcodes_samplesheet,
         merge_fastq_pass
     )
 
