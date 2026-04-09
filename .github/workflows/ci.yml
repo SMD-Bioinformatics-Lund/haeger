@@ -49,6 +49,8 @@ jobs:
         run: |
           nextflow \
             -log haeger/nextflow.log \
+            -c trana/nextflow.config \
+            -c haeger/nextflow.config \
             run haeger/main.nf \
             -profile test \
             -stub-run \
