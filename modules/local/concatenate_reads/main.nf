@@ -21,7 +21,8 @@ process CONCATENATE_READS {
     stub:
     output = csv.baseName + "_concatenated.csv"
     """
-    printf "sample,fastq_1\\n" > ${output}
+    echo "stub" > stub.fastq.gz
+    echo -e "sample,fastq_1\\ntest_sample,\${PWD}/stub.fastq.gz" > ${output}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
