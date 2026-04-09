@@ -3,8 +3,9 @@ process CONCATENATE_READS {
     path csv
     
     output:
-    path output         , emit: csv
-    path "versions.yml" , emit: versions
+    path output          , emit: csv
+    path "*.fastq.gz"    , emit: fastq
+    path "versions.yml"  , emit: versions
 
     script:
     def args = task.ext.args ?: ''
@@ -21,7 +22,7 @@ process CONCATENATE_READS {
     stub:
     output = csv.baseName + "_concatenated.csv"
     """
-    echo "stub" > stub.fastq.gz
+    touch stub.fastq.gz
     echo -e "sample,fastq_1\\ntest_sample,\${PWD}/stub.fastq.gz" > ${output}
 
     cat <<-END_VERSIONS > versions.yml
