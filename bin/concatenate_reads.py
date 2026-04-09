@@ -153,7 +153,7 @@ def process_csv_and_concatenate(input_file, output_file, sample_column, fastq_co
                 print(f"Found {len(matching_files)} files for sample {sample_id}")
 
                 # Create output filename
-                output_dir = Path(output_file).parent / "concatenated_fastqs"
+                output_dir = Path(output_file).parent
                 concatenated_file = output_dir / f"{sample_id}_concatenated.fastq.gz"
 
                 # Concatenate files
