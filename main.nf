@@ -2,39 +2,26 @@
 
 nextflow.enable.dsl=2
 
-include { TRANA                         } from '../trana/workflows/trana.nf'
-include { PIPELINE_INITIALISATION       } from '../trana/subworkflows/local/utils_nfcore_trana_pipeline/main.nf'
-include { CONCATENATE_READS             } from './modules/local/concatenate_reads/main.nf'
-include { HAEGER                        } from './workflows/haeger.nf'
+include { TRANA                   } from '../trana/workflows/trana.nf'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/pipeline_initialisation/main.nf'
+include { HAEGER                  } from './workflows/haeger.nf'
 
 workflow {
     main:
 
-    ch_versions                 = Channel.empty()
+    ch_versions = Channel.empty()
 
     //
-    // Initialize file channels for CONCATENATE_READS module
+    // Initialize file channels
     //
-    input_samples               = params.csv        ? file(params.csv, checkIfExists: true)             : null
-    merge_fastq_pass            = params.fastq_pass ? file(params.fastq_pass, checkIfExists: true)      : null
-    nextflow_schema             = file(params.nextflow_schema, checkIfExists: true)
-
-    CONCATENATE_READS (input_samples)
+    input_samples    = params.csv        ? file(params.csv, checkIfExists: true)        : null
+    merge_fastq_pass = params.fastq_pass ? file(params.fastq_pass, checkIfExists: true) : null
 
     //
-    // SUBWORKFLOW: Run initialisation tasks
+    // SUBWORKFLOW: Concatenate reads and parse samplesheet
     //
-    PIPELINE_INITIALISATION (
-        params.version,
-        params.validate_params,
-        nextflow_schema,
-        params.monochrome_logs,
-        workflow.commandLine,
-        params.outdir,
-        CONCATENATE_READS.out.csv,
-        params.barcodes_samplesheet,
-        merge_fastq_pass
-    )
+    PIPELINE_INITIALISATION (input_samples)
+    ch_versions = ch_versions.mix(PIPELINE_INITIALISATION.out.versions)
 
     if (params.run_trana) {
         //
@@ -45,10 +32,10 @@ workflow {
             PIPELINE_INITIALISATION.out.reads,
             params.outdir
         )
-        ch_versions.mix(TRANA.out.versions)
+        ch_versions = ch_versions.mix(TRANA.out.versions)
 
         HAEGER (TRANA.out.nanostats_unprocessed)
-        ch_versions.mix(HAEGER.out.versions)
+        ch_versions = ch_versions.mix(HAEGER.out.versions)
     } else {
         ch_nanostats = PIPELINE_INITIALISATION.out.reads.map { meta, reads ->
             def sample_id = meta.id
@@ -56,6 +43,6 @@ workflow {
             tuple(meta, file(nanostats_txt))
         }
         HAEGER (ch_nanostats)
-        ch_versions.mix(HAEGER.out.versions)
+        ch_versions = ch_versions.mix(HAEGER.out.versions)
     }
 }
