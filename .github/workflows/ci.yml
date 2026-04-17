@@ -50,6 +50,6 @@ jobs:
             -c trana/nextflow.config \
             -c haeger/nextflow.config \
             run haeger/main.nf \
-            -profile test \
+            -profile test,singularity \
             -stub-run \
             --csv haeger/test-data/test_input.csv
