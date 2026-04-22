@@ -27,7 +27,7 @@ process CONCATENATE_READS {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        concatenate_reads: 0.0.0
+        concatenate_reads: \$(concatenate_reads.py --version | sed 's/^.*concatenate_reads.py //' )
     END_VERSIONS
     """
 }
