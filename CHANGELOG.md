@@ -9,14 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Fixed
+
+### Changed
+
+## [0.1.0]
+
+### Added
+
  - Added `parse_qc_for_cdm.py` to bin
  - Added `cdm` & `qc` modules
  - Added config that overrides `trana` config
  - Added `CHANGELOG`
  - Added `concatenate_reads.py` to bin
+ - Added `PIPELINE_INITIALISATION` subworkflow
+ - Added `nextflow_schema.json` for parameter validation
+ - Added haeger-specific MultiQC assets
+ - Added CI stub-run workflow and `test` profile
 
 ### Fixed
 
 ### Changed
-
- - Changed name of pipeline from `gms_16s` to `trana`
