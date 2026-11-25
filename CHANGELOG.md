@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+ - Fixed `nanostats_txt` path failing to parse with Nextflow's strict config syntax
+ - Fixed `nanostats_txt` path to match TRANA's `nanoplot_unprocessed` output
+ - Fixed `concatenate_reads.py` not being executable
+ - Fixed `concatenate_reads.py` failing when the output CSV path has no directory
+ - Fixed `concatenate_reads.py` writing relative fastq paths that failed samplesheet validation
+
 ### Changed
 
 ## [0.1.0]

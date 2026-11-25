@@ -96,7 +96,7 @@ def concatenate_fastq_files(fastq_files, output_file):
     """
     try:
         # Create output directory if it doesn't exist
-        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+        os.makedirs(os.path.dirname(output_file) or '.', exist_ok=True)
 
         # Use cat command to concatenate gzipped files
         with open(output_file, 'wb') as outfile:
@@ -160,7 +160,7 @@ def process_csv_and_concatenate(input_file, output_file, sample_column, fastq_co
                 if concatenate_fastq_files(matching_files, str(concatenated_file)):
                     output_rows.append({
                         sample_column: sample_id,
-                        fastq_column: str(concatenated_file)
+                        fastq_column: str(concatenated_file.resolve())
                     })
                     print(f"Successfully concatenated {len(matching_files)} files for {sample_id}")
                 else:
