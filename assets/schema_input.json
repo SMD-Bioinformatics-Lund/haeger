@@ -32,6 +32,37 @@
                         "maxLength": 0
                     }
                 ]
+            },
+            "clarity_sample_id": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Clarity sample ID cannot contain spaces",
+                "meta": ["clarity_sample_id"]
+            },
+            "assay": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Assay cannot contain spaces",
+                "meta": ["assay"]
+            },
+            "clarity_pool_id": {
+                "type": "string",
+                "meta": ["clarity_pool_id"]
+            },
+            "platform": {
+                "type": "string",
+                "meta": ["platform"]
+            },
+            "sequencing_run": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Sequencing run cannot contain spaces",
+                "meta": ["sequencing_run"]
+            },
+            "n_reads": {
+                "type": "integer",
+                "errorMessage": "Number of reads must be an integer",
+                "meta": ["n_reads"]
             }
         },
         "required": ["sample", "fastq_1"]

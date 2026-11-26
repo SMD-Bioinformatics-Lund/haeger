@@ -13,7 +13,7 @@ process EXPORT_TO_CDM {
     echo --sequencing-run ${meta.sequencing_run} \\
         --sample-id ${meta.id} \\
         --assay ${meta.assay} \\
-        --qc ${params.cdm_outdir}/${qc} \\
+        --qc ${params.qc_outdir}/${qc} \\
         --lims-id ${meta.clarity_sample_id} > ${prefix}.cdmpy
     """
 

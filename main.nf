@@ -23,7 +23,7 @@ workflow {
     PIPELINE_INITIALISATION (input_samples)
     ch_versions = ch_versions.mix(PIPELINE_INITIALISATION.out.versions)
 
-    if (params.run_trana) {
+    if (params.run_trana.toString().toBoolean()) {
         //
         // WORKFLOW: Run main workflow
         //

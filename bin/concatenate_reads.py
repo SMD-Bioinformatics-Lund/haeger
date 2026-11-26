@@ -31,7 +31,7 @@ Procedure:
     1. Parse input csv samplesheet file.
     2. For each row, find files matching fastqs glob pattern.
     3. Concatenate matching files for each sample.
-    4. Write output csv with concatenated file paths.
+    4. Write output csv with concatenated file paths and the other input columns.
 
 -----------------------------------------------------------------------------------------------------------
 '''
@@ -136,6 +136,11 @@ def process_csv_and_concatenate(input_file, output_file, sample_column, fastq_co
             if missing_columns:
                 raise ValueError(f"Missing required columns: {', '.join(missing_columns)}")
 
+            passthrough_columns = [
+                col for col in reader.fieldnames
+                if col not in required_columns + [sample_column, fastq_column]
+            ]
+
             # Prepare output data
             output_rows = []
 
@@ -160,7 +165,8 @@ def process_csv_and_concatenate(input_file, output_file, sample_column, fastq_co
                 if concatenate_fastq_files(matching_files, str(concatenated_file)):
                     output_rows.append({
                         sample_column: sample_id,
-                        fastq_column: str(concatenated_file.resolve())
+                        fastq_column: str(concatenated_file.resolve()),
+                        **{col: row[col] for col in passthrough_columns}
                     })
                     print(f"Successfully concatenated {len(matching_files)} files for {sample_id}")
                 else:
@@ -169,7 +175,7 @@ def process_csv_and_concatenate(input_file, output_file, sample_column, fastq_co
             # Write output CSV
             with open(output_file, 'w', newline='', encoding='utf-8') as outfile:
                 if output_rows:
-                    fieldnames = [sample_column, fastq_column]
+                    fieldnames = [sample_column, fastq_column] + passthrough_columns
                     writer = csv.DictWriter(outfile, fieldnames=fieldnames)
                     writer.writeheader()
                     writer.writerows(output_rows)

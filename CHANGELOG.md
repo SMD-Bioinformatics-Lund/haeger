@@ -16,8 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Fixed `concatenate_reads.py` not being executable
  - Fixed `concatenate_reads.py` failing when the output CSV path has no directory
  - Fixed `concatenate_reads.py` writing relative fastq paths that failed samplesheet validation
+ - Fixed boolean flags such as `--run_trana false` counting as true when passed on the command line with Nextflow's strict syntax parser
+ - Fixed `EXPORT_TO_CDM` writing `null` for the sequencing run, assay and LIMS ID
+ - Fixed `EXPORT_TO_CDM` pointing `--qc` at the CDM directory instead of the QC directory
+ - Fixed TRANA's `pipeline_info` reports going to `null/pipeline_info` unless `--outdir` was given on the command line or in a params file
 
 ### Changed
+
+ - `concatenate_reads.py` now copies the input CSV's other columns into its output samplesheet, and they are added to `meta`
+ - TRANA's master HTML is now named after the sequencing run rather than the run timestamp
 
 ## [0.1.0]
 
