@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Fixed `EXPORT_TO_CDM` writing `null` for the sequencing run, assay and LIMS ID
  - Fixed `EXPORT_TO_CDM` pointing `--qc` at the CDM directory instead of the QC directory
  - Fixed TRANA's `pipeline_info` reports going to `null/pipeline_info` unless `--outdir` was given on the command line or in a params file
+ - Fixed CI failing to install Apptainer now that `ubuntu-latest` is Ubuntu 26.04, by pinning the runner to `ubuntu-24.04`
 
 ### Changed
 
