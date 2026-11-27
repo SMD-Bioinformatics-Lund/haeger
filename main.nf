@@ -32,7 +32,6 @@ workflow {
             PIPELINE_INITIALISATION.out.reads,
             params.outdir
         )
-        ch_versions = ch_versions.mix(TRANA.out.versions)
 
         HAEGER (TRANA.out.nanostats_unprocessed)
         ch_versions = ch_versions.mix(HAEGER.out.versions)
@@ -45,4 +44,14 @@ workflow {
         HAEGER (ch_nanostats)
         ch_versions = ch_versions.mix(HAEGER.out.versions)
     }
+
+    ch_versions
+        .map { versions_file -> versions_file.text.trim() }
+        .unique()
+        .mix(channel.of("""
+            Workflow:
+                haeger: ${workflow.manifest.version}
+                Nextflow: ${workflow.nextflow.version}
+            """.stripIndent().trim()))
+        .collectFile(name: 'haeger_software_versions.yml', storeDir: params.tracedir, sort: true, newLine: true)
 }

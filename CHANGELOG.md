@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+ - Added `haeger_software_versions.yml` to `pipeline_info`, listing the versions of haeger's own tools
+
 ### Fixed
 
  - Fixed `nanostats_txt` path failing to parse with Nextflow's strict config syntax
