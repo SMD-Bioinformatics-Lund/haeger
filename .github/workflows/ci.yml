@@ -32,6 +32,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: genomic-medicine-sweden/trana
+          ref: v1.1.0
           path: trana
 
       - name: Install Nextflow

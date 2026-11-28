@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - `concatenate_reads.py` now copies the input CSV's other columns into its output samplesheet, and they are added to `meta`
  - Bumped `concatenate_reads.py` to version 0.1.0
  - TRANA's master HTML is now named after the sequencing run rather than the run timestamp
+ - Pinned CI's TRANA checkout to `v1.1.0` instead of TRANA's `main` branch
 
 ## [0.1.0]
 
